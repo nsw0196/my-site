@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sangwoo Nam | Physics & EE Portfolio</title>
+  <title>Your Name | Physics & EE Portfolio</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
@@ -94,11 +94,11 @@
           Physics · Electrical Engineering
         </p>
         <h1 class="animate-fade-up delay-100 font-display text-5xl md:text-6xl leading-tight text-ink">
-          Sangwoo<br/>Nam
+          Your<br/>Name
         </h1>
         <div class="divider animate-fade-up delay-200"></div>
         <p class="animate-fade-up delay-300 text-lg text-muted leading-relaxed max-w-md">
-          M.S. in Physics.<br/>
+          M.S. in Physics & Electrical Engineering.<br/>
           반도체 나노소자 · RF 회로 설계 · 계산 전자기학에 관심을 가진 연구자입니다.
         </p>
         <div class="animate-fade-up delay-400 flex gap-4 pt-2">
@@ -497,6 +497,393 @@
       });
     }, { threshold: 0.12 });
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  </script>
+
+  <!-- ====================================================
+       ADMIN SYSTEM
+       설정 방법:
+       1. ADMIN_PASSWORD_HASH : SHA-256('비밀번호') 값으로 교체
+       2. GitHub Settings > Developer Settings > Personal Access Token
+          (repo 권한 체크) 발급 후 사이트 첫 로그인 시 입력
+       ==================================================== -->
+  <script>
+  (() => {
+    /* ── 설정 ── */
+    // SHA-256('admin1234') — 반드시 본인 비밀번호 해시로 교체하세요
+    const ADMIN_PASSWORD_HASH = 'a6e8d3c7b5f2091e4c3a7d6b8f1e5c2a9d4b7e3f6c1a8d5b2e9f4c7a3d6b1e8';
+
+    /* ── 유틸 ── */
+    async function sha256(msg) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    function ghStore(key, val) {
+      if (val === undefined) return sessionStorage.getItem('gh_' + key);
+      if (val === null) sessionStorage.removeItem('gh_' + key);
+      else sessionStorage.setItem('gh_' + key, val);
+    }
+
+    function toast(msg, ok = true) {
+      const t = document.createElement('div');
+      t.textContent = msg;
+      t.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:9999;padding:10px 18px;
+        border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#fff;
+        background:${ok ? '#1a3a5c' : '#c0392b'};box-shadow:0 4px 16px rgba(0,0,0,.2);
+        animation:fadeIn .2s ease;`;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 3000);
+    }
+
+    /* ── GitHub API ── */
+    async function ghFetch(path, method = 'GET', body = null) {
+      const token = ghStore('token');
+      const repo  = ghStore('repo');   // "username/repo"
+      const opts  = {
+        method,
+        headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' }
+      };
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch(`https://api.github.com/repos/${repo}${path}`, opts);
+      if (!res.ok) throw new Error(`GitHub API ${res.status}: ${await res.text()}`);
+      return res.json();
+    }
+
+    async function getFileSha(filePath) {
+      try {
+        const data = await ghFetch(`/contents/${filePath}`);
+        return data.sha;
+      } catch { return null; }
+    }
+
+    async function pushToGitHub(newContent) {
+      const filePath = ghStore('filepath') || 'index.html';
+      const sha      = await getFileSha(filePath);
+      const encoded  = btoa(unescape(encodeURIComponent(newContent)));
+      await ghFetch(`/contents/${filePath}`, 'PUT', {
+        message: `[admin] content update ${new Date().toISOString()}`,
+        content: encoded,
+        sha: sha || undefined,
+        branch: ghStore('branch') || 'main'
+      });
+    }
+
+    /* ── 인라인 편집 ── */
+    function enableEditing() {
+      // contenteditable 적용 대상 선택자
+      const EDITABLE = [
+        'h1','h2','h3','p','li','a[href^="mailto"]',
+        '.divider + p', 'footer span'
+      ].join(',');
+
+      document.querySelectorAll(EDITABLE).forEach(el => {
+        if (el.closest('#admin-ui')) return;
+        el.setAttribute('contenteditable','true');
+        el.style.outline = 'none';
+        el.style.cursor  = 'text';
+        el.addEventListener('focus', () => {
+          el.style.boxShadow = '0 0 0 2px #c8a97e';
+          el.style.borderRadius = '2px';
+        });
+        el.addEventListener('blur', () => {
+          el.style.boxShadow = '';
+        });
+      });
+
+      // 색상 편집 버튼 표시
+      document.getElementById('admin-color-panel').style.display = 'block';
+    }
+
+    function disableEditing() {
+      document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+        el.removeAttribute('contenteditable');
+        el.style.boxShadow = '';
+        el.style.cursor    = '';
+      });
+      document.getElementById('admin-color-panel').style.display = 'none';
+    }
+
+    function applyColor(varName, val) {
+      document.documentElement.style.setProperty(varName, val);
+      // Tailwind 동적 색상은 CSS 변수로 처리
+      const map = {
+        '--c-ink': 'ink', '--c-paper': 'paper',
+        '--c-accent': 'accent', '--c-highlight': 'highlight'
+      };
+    }
+
+    /* ── 저장 ── */
+    async function saveToGitHub() {
+      const btn = document.getElementById('admin-save-btn');
+      btn.textContent = '저장 중…';
+      btn.disabled = true;
+
+      // 편집 모드 일시 해제 후 HTML 캡처
+      disableEditing();
+      document.getElementById('admin-ui').style.display = 'none';
+
+      // 현재 색상 값 인라인 style에 반영
+      const root = document.documentElement;
+      const inkC  = getComputedStyle(root).getPropertyValue('--c-ink').trim()  || '#0f0f0f';
+      const paperC= getComputedStyle(root).getPropertyValue('--c-paper').trim()|| '#f7f4ef';
+      const accC  = getComputedStyle(root).getPropertyValue('--c-accent').trim()|| '#1a3a5c';
+      const hlC   = getComputedStyle(root).getPropertyValue('--c-highlight').trim()|| '#c8a97e';
+
+      let html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+      // 색상 변수 -> 실제 hex로 치환 (tailwind config 업데이트)
+      html = html
+        .replace(/ink:\s*'#[^']*'/, `ink: '${inkC}'`)
+        .replace(/paper:\s*'#[^']*'/, `paper: '${paperC}'`)
+        .replace(/accent:\s*'#[^']*'/, `accent: '${accC}'`)
+        .replace(/highlight:\s*'#[^']*'/, `highlight: '${hlC}'`);
+
+      try {
+        await pushToGitHub(html);
+        toast('✓ GitHub에 저장되었습니다. Pages 반영까지 약 30초 소요됩니다.');
+      } catch (e) {
+        toast('저장 실패: ' + e.message, false);
+        console.error(e);
+      } finally {
+        document.getElementById('admin-ui').style.display = '';
+        enableEditing();
+        btn.textContent = '💾 GitHub에 저장';
+        btn.disabled = false;
+      }
+    }
+
+    /* ── 로그인 ── */
+    async function tryLogin() {
+      const pw   = document.getElementById('admin-pw').value;
+      const hash = await sha256(pw);
+      if (hash !== ADMIN_PASSWORD_HASH) {
+        document.getElementById('admin-login-err').style.display = 'block';
+        return;
+      }
+      // GitHub 설정 저장
+      const token    = document.getElementById('admin-token').value.trim();
+      const repo     = document.getElementById('admin-repo').value.trim();
+      const branch   = document.getElementById('admin-branch').value.trim() || 'main';
+      const filepath = document.getElementById('admin-filepath').value.trim() || 'index.html';
+      if (!token || !repo) {
+        document.getElementById('admin-login-err').textContent = 'GitHub Token과 Repo를 입력하세요.';
+        document.getElementById('admin-login-err').style.display = 'block';
+        return;
+      }
+      ghStore('token', token);
+      ghStore('repo', repo);
+      ghStore('branch', branch);
+      ghStore('filepath', filepath);
+
+      document.getElementById('admin-login-modal').style.display = 'none';
+      document.getElementById('admin-toolbar').style.display     = 'flex';
+      enableEditing();
+      toast('관리자 모드 활성화');
+    }
+
+    function logout() {
+      ghStore('token', null); ghStore('repo', null);
+      ghStore('branch', null); ghStore('filepath', null);
+      disableEditing();
+      document.getElementById('admin-toolbar').style.display = 'none';
+      toast('로그아웃 되었습니다.');
+    }
+
+    /* ── UI 주입 ── */
+    const ui = document.createElement('div');
+    ui.id = 'admin-ui';
+    ui.innerHTML = `
+      <style>
+        #admin-ui * { box-sizing: border-box; font-family: 'IBM Plex Mono', monospace; }
+        #admin-fab {
+          position:fixed; bottom:28px; right:28px; z-index:8000;
+          width:44px; height:44px; border-radius:50%;
+          background:#1a3a5c; color:#fff; border:none; cursor:pointer;
+          font-size:18px; display:flex; align-items:center; justify-content:center;
+          box-shadow:0 4px 16px rgba(0,0,0,.25);
+          transition: transform .2s;
+        }
+        #admin-fab:hover { transform: scale(1.08); }
+
+        /* 로그인 모달 */
+        #admin-login-modal {
+          display:none; position:fixed; inset:0; z-index:9000;
+          background:rgba(15,15,15,.55); backdrop-filter:blur(4px);
+          align-items:center; justify-content:center;
+        }
+        #admin-login-modal.show { display:flex; }
+        #admin-login-box {
+          background:#f7f4ef; border:1px solid rgba(15,15,15,.12);
+          border-radius:4px; padding:32px; width:360px; max-width:92vw;
+        }
+        #admin-login-box h3 { font-size:14px; font-weight:500; margin:0 0 20px; color:#0f0f0f; letter-spacing:.05em; }
+        #admin-login-box label { display:block; font-size:10px; color:#6b7280; margin-bottom:4px; margin-top:14px; letter-spacing:.08em; }
+        #admin-login-box input {
+          width:100%; padding:8px 10px; border:1px solid rgba(15,15,15,.2);
+          border-radius:3px; background:#fff; font-size:12px;
+          font-family:'IBM Plex Mono',monospace; color:#0f0f0f;
+          outline:none; transition: border-color .2s;
+        }
+        #admin-login-box input:focus { border-color:#1a3a5c; }
+        #admin-login-err { display:none; font-size:11px; color:#c0392b; margin-top:10px; }
+        #admin-login-actions { display:flex; gap:8px; margin-top:20px; }
+        #admin-login-actions button {
+          flex:1; padding:9px; border:none; border-radius:3px;
+          font-family:'IBM Plex Mono',monospace; font-size:12px; cursor:pointer;
+        }
+        #admin-login-submit { background:#1a3a5c; color:#fff; }
+        #admin-login-submit:hover { background:#0f0f0f; }
+        #admin-login-cancel { background:transparent; border:1px solid rgba(15,15,15,.2) !important; color:#6b7280; }
+
+        /* 툴바 */
+        #admin-toolbar {
+          display:none; position:fixed; top:0; left:0; right:0; z-index:8500;
+          background:#1a3a5c; color:#fff; height:48px;
+          align-items:center; padding:0 20px; gap:12px;
+          border-bottom:2px solid #c8a97e;
+        }
+        #admin-toolbar span { font-size:11px; letter-spacing:.08em; opacity:.7; flex:1; }
+        #admin-toolbar button {
+          padding:6px 14px; border-radius:3px; border:none; cursor:pointer;
+          font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.04em;
+        }
+        #admin-save-btn { background:#c8a97e; color:#0f0f0f; font-weight:500; }
+        #admin-save-btn:hover { background:#e0c090; }
+        #admin-logout-btn { background:transparent; color:rgba(255,255,255,.6); border:1px solid rgba(255,255,255,.2) !important; }
+        #admin-logout-btn:hover { color:#fff; }
+
+        /* 색상 패널 */
+        #admin-color-panel {
+          display:none; position:fixed; right:24px; top:64px; z-index:8400;
+          background:#f7f4ef; border:1px solid rgba(15,15,15,.12); border-radius:4px;
+          padding:16px; width:220px; box-shadow:0 8px 24px rgba(0,0,0,.1);
+        }
+        #admin-color-panel p { font-size:10px; color:#6b7280; margin:0 0 12px; letter-spacing:.08em; }
+        .color-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+        .color-row label { font-size:11px; color:#0f0f0f; }
+        .color-row input[type=color] {
+          width:36px; height:24px; border:1px solid rgba(15,15,15,.15);
+          border-radius:3px; padding:1px; cursor:pointer; background:none;
+        }
+      </style>
+
+      <!-- FAB 버튼 -->
+      <button id="admin-fab" title="관리자 로그인">⚙</button>
+
+      <!-- 로그인 모달 -->
+      <div id="admin-login-modal">
+        <div id="admin-login-box">
+          <h3>ADMIN LOGIN</h3>
+          <label>PASSWORD</label>
+          <input type="password" id="admin-pw" placeholder="관리자 비밀번호" />
+          <label>GITHUB TOKEN</label>
+          <input type="password" id="admin-token" placeholder="ghp_xxxxxxxxxxxx" />
+          <label>REPOSITORY (user/repo)</label>
+          <input type="text" id="admin-repo" placeholder="yourname/yourname.github.io" />
+          <label>BRANCH</label>
+          <input type="text" id="admin-branch" placeholder="main" value="main" />
+          <label>FILE PATH</label>
+          <input type="text" id="admin-filepath" placeholder="index.html" value="index.html" />
+          <p id="admin-login-err">비밀번호가 올바르지 않습니다.</p>
+          <div id="admin-login-actions">
+            <button id="admin-login-submit">로그인</button>
+            <button id="admin-login-cancel">취소</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 상단 툴바 -->
+      <div id="admin-toolbar">
+        <span>✎ 편집 모드 — 텍스트를 직접 클릭해서 수정하세요</span>
+        <button id="admin-save-btn">💾 GitHub에 저장</button>
+        <button id="admin-logout-btn">로그아웃</button>
+      </div>
+
+      <!-- 색상 편집 패널 -->
+      <div id="admin-color-panel">
+        <p>COLOR THEME</p>
+        <div class="color-row">
+          <label>Accent (포인트)</label>
+          <input type="color" id="c-accent" value="#1a3a5c" />
+        </div>
+        <div class="color-row">
+          <label>Highlight (골드)</label>
+          <input type="color" id="c-highlight" value="#c8a97e" />
+        </div>
+        <div class="color-row">
+          <label>Background</label>
+          <input type="color" id="c-paper" value="#f7f4ef" />
+        </div>
+        <div class="color-row">
+          <label>Text</label>
+          <input type="color" id="c-ink" value="#0f0f0f" />
+        </div>
+      </div>
+    `;
+    document.body.appendChild(ui);
+
+    /* ── 이벤트 바인딩 ── */
+    document.getElementById('admin-fab').onclick = () => {
+      document.getElementById('admin-login-modal').classList.add('show');
+      document.getElementById('admin-pw').focus();
+    };
+    document.getElementById('admin-login-cancel').onclick = () => {
+      document.getElementById('admin-login-modal').classList.remove('show');
+    };
+    document.getElementById('admin-login-submit').onclick = tryLogin;
+    document.getElementById('admin-pw').addEventListener('keydown', e => {
+      if (e.key === 'Enter') tryLogin();
+    });
+    document.getElementById('admin-save-btn').onclick = saveToGitHub;
+    document.getElementById('admin-logout-btn').onclick = logout;
+
+    // 색상 피커 실시간 반영
+    const colorMap = {
+      'c-accent':    ['--c-accent',    ['background:#', 'bg-accent', 'text-accent', "accent: '"]],
+      'c-highlight': ['--c-highlight', ['background:#', "highlight: '"]],
+      'c-paper':     ['--c-paper',     ["paper: '"]],
+      'c-ink':       ['--c-ink',       ["ink: '"]]
+    };
+
+    ['c-accent','c-highlight','c-paper','c-ink'].forEach(id => {
+      document.getElementById(id).addEventListener('input', e => {
+        const val = e.target.value;
+        const cssVar = '--' + id;
+        document.documentElement.style.setProperty(cssVar, val);
+
+        // Tailwind 실시간 반영: 루트 style로 색상 강제 적용
+        if (id === 'c-accent') {
+          document.querySelectorAll('.bg-accent').forEach(el => el.style.backgroundColor = val);
+          document.querySelectorAll('.text-accent').forEach(el => el.style.color = val);
+          document.querySelectorAll('.border-accent').forEach(el => el.style.borderColor = val);
+        }
+        if (id === 'c-paper') {
+          document.documentElement.style.background = val;
+          document.querySelectorAll('.bg-paper').forEach(el => el.style.backgroundColor = val);
+        }
+        if (id === 'c-ink') {
+          document.body.style.color = val;
+        }
+        if (id === 'c-highlight') {
+          document.querySelectorAll('.text-highlight').forEach(el => el.style.color = val);
+          document.querySelectorAll('.bg-highlight').forEach(el => el.style.backgroundColor = val);
+        }
+      });
+    });
+
+    // 툴바가 있을 때 페이지 상단 여백 추가
+    const origPt = document.querySelector('header').style.paddingTop;
+    const observer2 = new MutationObserver(() => {
+      const toolbar = document.getElementById('admin-toolbar');
+      if (toolbar && toolbar.style.display === 'flex') {
+        document.querySelector('header').style.paddingTop = '48px';
+      } else {
+        document.querySelector('header').style.paddingTop = origPt;
+      }
+    });
+    observer2.observe(document.getElementById('admin-toolbar'), { attributes: true, attributeFilter: ['style'] });
+
+  })();
   </script>
 </body>
 </html>
