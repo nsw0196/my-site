@@ -1,6 +1,502 @@
 <!DOCTYPE html>
-<html>
-<body>
-<h1>Hello</h1>
+<html lang="ko" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Name | Physics & EE Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['IBM Plex Sans', 'sans-serif'],
+            mono: ['IBM Plex Mono', 'monospace'],
+            display: ['Playfair Display', 'serif'],
+          },
+          colors: {
+            ink: '#0f0f0f',
+            paper: '#f7f4ef',
+            accent: '#1a3a5c',
+            highlight: '#c8a97e',
+            muted: '#6b7280',
+          },
+          animation: {
+            'fade-up': 'fadeUp 0.7s ease both',
+          },
+          keyframes: {
+            fadeUp: {
+              from: { opacity: 0, transform: 'translateY(24px)' },
+              to:   { opacity: 1, transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html { background: #f7f4ef; color: #0f0f0f; }
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-400 { animation-delay: 0.4s; }
+    .delay-500 { animation-delay: 0.5s; }
+
+    /* 섹션 진입 애니메이션 */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* 커스텀 스크롤바 */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f7f4ef; }
+    ::-webkit-scrollbar-thumb { background: #c8a97e; border-radius: 3px; }
+
+    /* 네비 라인 */
+    nav a::after { content: ''; display: block; height: 1px; background: #1a3a5c; transform: scaleX(0); transform-origin: left; transition: transform 0.3s ease; }
+    nav a:hover::after { transform: scaleX(1); }
+
+    /* 프로젝트 카드 호버 */
+    .project-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .project-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(15,15,15,0.08); }
+
+    /* 태그 */
+    .tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.04em; }
+
+    /* 구분선 */
+    .divider { width: 3rem; height: 2px; background: #c8a97e; }
+  </style>
+</head>
+<body class="font-sans bg-paper text-ink antialiased">
+
+  <!-- ── 네비게이션 ── -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-paper/90 backdrop-blur-sm border-b border-ink/10">
+    <div class="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
+      <a href="#" class="font-mono text-sm font-medium text-accent tracking-wide">YN<span class="text-highlight">.</span></a>
+      <div class="flex gap-8 text-sm text-muted">
+        <a href="#about"       class="hover:text-ink transition-colors pb-0.5">About</a>
+        <a href="#research"    class="hover:text-ink transition-colors pb-0.5">Research</a>
+        <a href="#projects"    class="hover:text-ink transition-colors pb-0.5">Projects</a>
+        <a href="#publications"class="hover:text-ink transition-colors pb-0.5">Publications</a>
+        <a href="#contact"     class="hover:text-ink transition-colors pb-0.5">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <header class="min-h-screen flex items-center pt-14">
+    <div class="max-w-5xl mx-auto px-6 py-24 grid md:grid-cols-5 gap-12 items-center">
+
+      <!-- 텍스트 -->
+      <div class="md:col-span-3 space-y-6">
+        <p class="animate-fade-up font-mono text-sm text-highlight uppercase tracking-widest">
+          Physics · Electrical Engineering
+        </p>
+        <h1 class="animate-fade-up delay-100 font-display text-5xl md:text-6xl leading-tight text-ink">
+          Your<br/>Name
+        </h1>
+        <div class="divider animate-fade-up delay-200"></div>
+        <p class="animate-fade-up delay-300 text-lg text-muted leading-relaxed max-w-md">
+          M.S. in Physics & Electrical Engineering.<br/>
+          반도체 나노소자 · RF 회로 설계 · 계산 전자기학에 관심을 가진 연구자입니다.
+        </p>
+        <div class="animate-fade-up delay-400 flex gap-4 pt-2">
+          <a href="#projects"
+             class="px-6 py-2.5 bg-accent text-paper text-sm font-medium rounded-sm hover:bg-ink transition-colors">
+            Projects 보기
+          </a>
+          <a href="#contact"
+             class="px-6 py-2.5 border border-ink/30 text-sm font-medium rounded-sm hover:border-accent hover:text-accent transition-colors">
+            연락하기
+          </a>
+        </div>
+      </div>
+
+      <!-- 우측 스탯 블록 -->
+      <aside class="animate-fade-up delay-500 md:col-span-2 border border-ink/10 rounded-sm p-6 space-y-5 bg-white/50">
+        <div>
+          <p class="font-mono text-xs text-muted uppercase tracking-widest mb-1">소속</p>
+          <p class="text-sm font-medium">서울대학교 물리학과</p>
+          <p class="text-xs text-muted">지도교수: 홍길동 교수님</p>
+        </div>
+        <div class="border-t border-ink/10"></div>
+        <div>
+          <p class="font-mono text-xs text-muted uppercase tracking-widest mb-2">관심 분야</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag px-2 py-1 bg-accent/10 text-accent rounded-sm">반도체 소자</span>
+            <span class="tag px-2 py-1 bg-accent/10 text-accent rounded-sm">RF 회로</span>
+            <span class="tag px-2 py-1 bg-accent/10 text-accent rounded-sm">계산 EM</span>
+            <span class="tag px-2 py-1 bg-accent/10 text-accent rounded-sm">나노포토닉스</span>
+          </div>
+        </div>
+        <div class="border-t border-ink/10"></div>
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div>
+            <p class="text-2xl font-display text-accent">3</p>
+            <p class="font-mono text-xs text-muted">논문</p>
+          </div>
+          <div>
+            <p class="text-2xl font-display text-accent">5</p>
+            <p class="font-mono text-xs text-muted">프로젝트</p>
+          </div>
+          <div>
+            <p class="text-2xl font-display text-accent">2</p>
+            <p class="font-mono text-xs text-muted">수상</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </header>
+
+  <!-- ── ABOUT ── -->
+  <section id="about" class="py-24 border-t border-ink/10">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="reveal grid md:grid-cols-3 gap-12">
+        <div>
+          <p class="font-mono text-xs text-highlight uppercase tracking-widest mb-3">01 / About</p>
+          <h2 class="font-display text-3xl">소개</h2>
+          <div class="divider mt-4"></div>
+        </div>
+        <div class="md:col-span-2 space-y-4 text-muted leading-relaxed">
+          <p>
+            물리학과 전자공학의 경계에서 나노스케일 소자와 전자기 시스템을 연구해 왔습니다.
+            석사 과정에서 <strong class="text-ink font-medium">GaN 기반 고전자이동도 트랜지스터(HEMT)</strong>의
+            RF 특성 최적화 연구를 수행하였으며, FDTD 시뮬레이션과 직접 소자 제작 경험을 보유하고 있습니다.
+          </p>
+          <p>
+            학문적 연구 외에도 Python, MATLAB을 활용한 데이터 분석 자동화,
+            COMSOL Multiphysics 기반 시뮬레이션, PCB 설계 경험이 있습니다.
+          </p>
+          <div class="pt-4 grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p class="font-mono text-xs text-muted uppercase mb-2">Language & Tools</p>
+              <ul class="space-y-1 text-ink/80">
+                <li>Python · NumPy · SciPy</li>
+                <li>MATLAB · Simulink</li>
+                <li>COMSOL · HFSS · ADS</li>
+                <li>C · Verilog</li>
+              </ul>
+            </div>
+            <div>
+              <p class="font-mono text-xs text-muted uppercase mb-2">Fabrication</p>
+              <ul class="space-y-1 text-ink/80">
+                <li>클린룸 공정 (리소그래피)</li>
+                <li>RIE · 스퍼터링 증착</li>
+                <li>SEM · AFM 측정</li>
+                <li>Network Analyzer</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── RESEARCH ── -->
+  <section id="research" class="py-24 bg-accent/5 border-t border-ink/10">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="reveal mb-12">
+        <p class="font-mono text-xs text-highlight uppercase tracking-widest mb-3">02 / Research</p>
+        <h2 class="font-display text-3xl">연구 분야</h2>
+        <div class="divider mt-4"></div>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- 카드 1 -->
+        <div class="reveal project-card bg-white/70 border border-ink/10 rounded-sm p-6 space-y-3">
+          <div class="w-10 h-10 rounded-sm bg-accent/10 flex items-center justify-center">
+            <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/>
+            </svg>
+          </div>
+          <h3 class="font-medium text-ink">나노소자 물리</h3>
+          <p class="text-sm text-muted leading-relaxed">
+            GaN, AlGaAs 기반 고전자이동도 트랜지스터의 2DEG 특성 및 RF 성능 향상 연구.
+            Schrödinger-Poisson self-consistent 해석 수행.
+          </p>
+          <div class="flex flex-wrap gap-1.5 pt-1">
+            <span class="tag px-1.5 py-0.5 bg-accent/10 text-accent rounded-sm">HEMT</span>
+            <span class="tag px-1.5 py-0.5 bg-accent/10 text-accent rounded-sm">2DEG</span>
+          </div>
+        </div>
+        <!-- 카드 2 -->
+        <div class="reveal project-card bg-white/70 border border-ink/10 rounded-sm p-6 space-y-3" style="transition-delay:0.1s">
+          <div class="w-10 h-10 rounded-sm bg-highlight/20 flex items-center justify-center">
+            <svg class="w-5 h-5 text-highlight" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <h3 class="font-medium text-ink">RF/마이크로파 회로</h3>
+          <p class="text-sm text-muted leading-relaxed">
+            5G 대역 저잡음 증폭기(LNA) 및 전력 증폭기(PA) 설계.
+            ADS를 이용한 load-pull 시뮬레이션 및 임피던스 매칭 최적화.
+          </p>
+          <div class="flex flex-wrap gap-1.5 pt-1">
+            <span class="tag px-1.5 py-0.5 bg-highlight/20 text-amber-700 rounded-sm">LNA</span>
+            <span class="tag px-1.5 py-0.5 bg-highlight/20 text-amber-700 rounded-sm">5G mmWave</span>
+          </div>
+        </div>
+        <!-- 카드 3 -->
+        <div class="reveal project-card bg-white/70 border border-ink/10 rounded-sm p-6 space-y-3" style="transition-delay:0.2s">
+          <div class="w-10 h-10 rounded-sm bg-green-50 flex items-center justify-center">
+            <svg class="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h3 class="font-medium text-ink">계산 전자기학</h3>
+          <p class="text-sm text-muted leading-relaxed">
+            FDTD, FEM 기반 전자기 시뮬레이션. 나노포토닉 구조의 광 국재화 현상 및
+            플라즈몬 공명 특성 수치 해석.
+          </p>
+          <div class="flex flex-wrap gap-1.5 pt-1">
+            <span class="tag px-1.5 py-0.5 bg-green-50 text-green-800 rounded-sm">FDTD</span>
+            <span class="tag px-1.5 py-0.5 bg-green-50 text-green-800 rounded-sm">Plasmonics</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROJECTS ── -->
+  <section id="projects" class="py-24 border-t border-ink/10">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="reveal mb-12">
+        <p class="font-mono text-xs text-highlight uppercase tracking-widest mb-3">03 / Projects</p>
+        <h2 class="font-display text-3xl">주요 프로젝트</h2>
+        <div class="divider mt-4"></div>
+      </div>
+
+      <div class="space-y-6">
+        <!-- 프로젝트 1 -->
+        <div class="reveal project-card border border-ink/10 rounded-sm p-7 grid md:grid-cols-4 gap-6 hover:border-accent/30 transition-colors">
+          <div class="md:col-span-3 space-y-3">
+            <div class="flex items-center gap-3">
+              <span class="font-mono text-xs text-muted">2024</span>
+              <span class="w-1 h-1 rounded-full bg-muted"></span>
+              <span class="tag px-2 py-0.5 bg-accent/10 text-accent rounded-sm">소자 제작</span>
+            </div>
+            <h3 class="text-lg font-medium text-ink">GaN HEMT 게이트 길이 최소화를 통한 ft 향상 연구</h3>
+            <p class="text-sm text-muted leading-relaxed">
+              e-beam 리소그래피를 이용한 80nm T-게이트 공정 개발. 클린룸에서 직접 소자를 제작하고
+              Network Analyzer로 S-파라미터를 측정, ft = 220 GHz 달성.
+            </p>
+            <div class="flex flex-wrap gap-2 pt-1">
+              <span class="tag px-1.5 py-0.5 border border-ink/15 text-muted rounded-sm">GaN</span>
+              <span class="tag px-1.5 py-0.5 border border-ink/15 text-muted rounded-sm">e-beam litho</span>
+              <span class="tag px-1.5 py-0.5 border border-ink/15 text-muted rounded-sm">S-parameter</span>
+              <span class="tag px-1.5 py-0.5 border border-ink/15 text-muted rounded-sm">ADS</span>
+            </div>
+          </div>
+          <div class="flex md:flex-col gap-2 md:items-end justify-start">
+            <a href="#" class="text-xs font-mono text-accent hover:underline flex items-center gap-1">
+              GitHub →
+            </a>
+            <a href="#" class="text-xs font-mono text-accent hover:underline flex items-center gap-1">
+              논문 →
+            </a>
+          </div>
+        </div>
+
+        <!-- 프로젝트 2 -->
+        <div class="reveal project-card border border-ink/10 rounded-sm p-7 grid md:grid-cols-4 gap-6 hover:border-accent/30 transition-colors">
+          <div class="md:col-span-3 space-y-3">
+            <div class="flex items-center gap-3">
+              <span class="font-mono text-xs text-muted">2023</span>
+              <span class="w-1 h-1 rounded-full bg-muted"></span>
+              <span class="tag px-2 py-0.5 bg-highlight/20 text-amber-700 rounded-sm">시뮬레이션</span>
+            </div>
+            <h3 class="text-lg font-medium text-ink">28 GHz 대역 LNA 설계 및 측정</h3>
+            <p class="text-sm text-muted leading-relaxed">
+              Keysight ADS를 사용한 5G mmWave LNA 설계. NF &lt; 2.5 dB, Gain &gt; 18 dB 달성.
+              Rogers 4003 PCB 제작 후 VNA 측정으로 시뮬레이션 결과와 비교 검증.
+            </p>
+            <div class="flex flex-wrap gap-2 pt-1">
+              <span class="tag px-1.5 py-0.5 border border-ink/15 text-muted rounded-sm">ADS</span>
+              <span class="tag px-1.5 py-0.5 border border-ink/15 text-muted rounded-sm">mmWave</span>
+              <span class="tag px-1.5 py-0.5 border border-ink/15 text-muted rounded-sm">LNA</span>
+              <span class="tag px-1.5 py-0.5 border border-ink/15 text-muted rounded-sm">PCB</span>
+            </div>
+          </div>
+          <div class="flex md:flex-col gap-2 md:items-end justify-start">
+            <a href="#" class="text-xs font-mono text-accent hover:underline">GitHub →</a>
+            <a href="#" class="text-xs font-mono text-accent hover:underline">발표자료 →</a>
+          </div>
+        </div>
+
+        <!-- 프로젝트 3 -->
+        <div class="reveal project-card border border-ink/10 rounded-sm p-7 grid md:grid-cols-4 gap-6 hover:border-accent/30 transition-colors">
+          <div class="md:col-span-3 space-y-3">
+            <div class="flex items-center gap-3">
+              <span class="font-mono text-xs text-muted">2023</span>
+              <span class="w-1 h-1 rounded-full bg-muted"></span>
+              <span class="tag px-2 py-0.5 bg-green-50 text-green-800 rounded-sm">소프트웨어</span>
+            </div>
+            <h3 class="text-lg font-medium text-ink">FDTD 시뮬레이터 Python 구현</h3>
+            <p class="text-sm text-muted leading-relaxed">
+              Yee 격자 기반 2D FDTD 솔버를 NumPy로 처음부터 구현. PML 흡수 경계 조건 적용.
+              나노 안테나 주변 근접장 분포 시각화 및 MEEP 결과와 비교 검증.
+            </p>
+            <div class="flex flex-wrap gap-2 pt-1">
+              <span class="tag px-1.5 py-0.5 border border-ink/15 text-muted rounded-sm">Python</span>
+              <span class="tag px-1.5 py-0.5 border border-ink/15 text-muted rounded-sm">FDTD</span>
+              <span class="tag px-1.5 py-0.5 border border-ink/15 text-muted rounded-sm">NumPy</span>
+              <span class="tag px-1.5 py-0.5 border border-ink/15 text-muted rounded-sm">PML</span>
+            </div>
+          </div>
+          <div class="flex md:flex-col gap-2 md:items-end justify-start">
+            <a href="#" class="text-xs font-mono text-accent hover:underline">GitHub →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PUBLICATIONS ── -->
+  <section id="publications" class="py-24 bg-accent/5 border-t border-ink/10">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="reveal mb-12">
+        <p class="font-mono text-xs text-highlight uppercase tracking-widest mb-3">04 / Publications & Awards</p>
+        <h2 class="font-display text-3xl">논문 및 수상</h2>
+        <div class="divider mt-4"></div>
+      </div>
+
+      <div class="space-y-4">
+        <!-- 논문 -->
+        <div class="reveal bg-white/70 border border-ink/10 rounded-sm p-5 flex gap-5">
+          <span class="font-mono text-xs text-highlight mt-0.5 shrink-0">2024</span>
+          <div>
+            <p class="text-sm font-medium text-ink leading-relaxed">
+              "Gate-length Scaling of GaN HEMTs for Sub-THz Operation"
+            </p>
+            <p class="text-xs text-muted mt-1">Your Name, Gildong Hong · <em>IEEE Electron Device Letters</em>, vol. 45, no. 3, pp. 123–126</p>
+            <a href="#" class="text-xs font-mono text-accent hover:underline mt-1 inline-block">DOI →</a>
+          </div>
+        </div>
+        <div class="reveal bg-white/70 border border-ink/10 rounded-sm p-5 flex gap-5">
+          <span class="font-mono text-xs text-highlight mt-0.5 shrink-0">2023</span>
+          <div>
+            <p class="text-sm font-medium text-ink leading-relaxed">
+              "Near-field Enhancement in Plasmonic Bowtie Nanoantennas: FDTD Analysis"
+            </p>
+            <p class="text-xs text-muted mt-1">Your Name et al. · <em>Optics Express</em>, vol. 31, no. 8, pp. 12345–12357</p>
+            <a href="#" class="text-xs font-mono text-accent hover:underline mt-1 inline-block">DOI →</a>
+          </div>
+        </div>
+        <!-- 학술대회 -->
+        <div class="reveal bg-white/70 border border-ink/10 rounded-sm p-5 flex gap-5">
+          <span class="font-mono text-xs text-muted mt-0.5 shrink-0">2023</span>
+          <div>
+            <p class="text-sm font-medium text-ink leading-relaxed">
+              "28 GHz Low-Noise Amplifier Design for 5G Applications"
+            </p>
+            <p class="text-xs text-muted mt-1">Your Name · <em>2023 Korean Conference on Semiconductors (KCS)</em> · Poster</p>
+          </div>
+        </div>
+
+        <!-- 구분 -->
+        <div class="pt-4 pb-2">
+          <p class="font-mono text-xs text-muted uppercase tracking-widest">Awards</p>
+        </div>
+        <div class="reveal flex gap-5 items-start">
+          <span class="font-mono text-xs text-highlight shrink-0 mt-0.5">2024</span>
+          <div>
+            <p class="text-sm font-medium text-ink">우수 논문상 · 한국반도체학술대회</p>
+            <p class="text-xs text-muted">GaN HEMT 게이트 스케일링 연구 발표</p>
+          </div>
+        </div>
+        <div class="reveal flex gap-5 items-start">
+          <span class="font-mono text-xs text-highlight shrink-0 mt-0.5">2022</span>
+          <div>
+            <p class="text-sm font-medium text-ink">BK21 우수 대학원생 장학금 · 서울대학교</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTACT ── -->
+  <section id="contact" class="py-24 border-t border-ink/10">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="reveal grid md:grid-cols-2 gap-12 items-center">
+        <div class="space-y-5">
+          <p class="font-mono text-xs text-highlight uppercase tracking-widest">05 / Contact</p>
+          <h2 class="font-display text-4xl leading-tight">함께 이야기해요.</h2>
+          <div class="divider"></div>
+          <p class="text-muted leading-relaxed">
+            대학원 진학 상담, 연구 협업, 채용 문의 등 어떤 이야기도 환영합니다.
+            이메일로 연락 주시면 48시간 이내 회신드리겠습니다.
+          </p>
+        </div>
+        <div class="space-y-4">
+          <a href="mailto:yourname@snu.ac.kr"
+             class="flex items-center gap-4 p-4 border border-ink/10 rounded-sm hover:border-accent/40 hover:bg-accent/5 transition-all group">
+            <div class="w-9 h-9 rounded-sm bg-accent/10 flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs text-muted font-mono">Email</p>
+              <p class="text-sm font-medium text-ink group-hover:text-accent transition-colors">yourname@snu.ac.kr</p>
+            </div>
+          </a>
+          <a href="https://github.com/yourname" target="_blank"
+             class="flex items-center gap-4 p-4 border border-ink/10 rounded-sm hover:border-accent/40 hover:bg-accent/5 transition-all group">
+            <div class="w-9 h-9 rounded-sm bg-accent/10 flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs text-muted font-mono">GitHub</p>
+              <p class="text-sm font-medium text-ink group-hover:text-accent transition-colors">github.com/yourname</p>
+            </div>
+          </a>
+          <a href="https://linkedin.com/in/yourname" target="_blank"
+             class="flex items-center gap-4 p-4 border border-ink/10 rounded-sm hover:border-accent/40 hover:bg-accent/5 transition-all group">
+            <div class="w-9 h-9 rounded-sm bg-accent/10 flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs text-muted font-mono">LinkedIn</p>
+              <p class="text-sm font-medium text-ink group-hover:text-accent transition-colors">linkedin.com/in/yourname</p>
+            </div>
+          </a>
+          <a href="/cv.pdf" download
+             class="flex items-center gap-4 p-4 border border-highlight/40 rounded-sm bg-highlight/5 hover:bg-highlight/10 transition-all group">
+            <div class="w-9 h-9 rounded-sm bg-highlight/20 flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs text-muted font-mono">Download</p>
+              <p class="text-sm font-medium text-ink">CV 다운로드 (PDF)</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer class="border-t border-ink/10 py-8">
+    <div class="max-w-5xl mx-auto px-6 flex items-center justify-between text-xs text-muted font-mono">
+      <span>© 2025 Your Name</span>
+      <span>Built with Tailwind CSS</span>
+    </div>
+  </footer>
+
+  <!-- 스크롤 인터섹션 옵저버 -->
+  <script>
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  </script>
 </body>
 </html>
