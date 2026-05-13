@@ -508,9 +508,15 @@
        ==================================================== -->
   <script>
   (() => {
-    /* ── 설정 ── */
-    // SHA-256('admin1234') — 반드시 본인 비밀번호 해시로 교체하세요
-    const ADMIN_PASSWORD_HASH = 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270';
+    /* ═══════════════════════════════════════════
+       관리자 설정 — 이 부분만 수정하면 됩니다
+       ═══════════════════════════════════════════ */
+    const ADMIN_ID            = 'admin';           // 관리자 아이디
+    const ADMIN_PASSWORD_HASH = 'ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270'; // SHA-256(비밀번호)
+    const GH_TOKEN            = 'ghp_여기에_토큰_붙여넣기';   // GitHub Personal Access Token
+    const GH_REPO             = 'yourname/yourname.github.io'; // GitHub 저장소
+    const GH_BRANCH           = 'main';            // 브랜치
+    const GH_FILEPATH         = 'index.html';      // 파일 경로
 
     /* ── 유틸 ── */
     async function sha256(msg) {
@@ -537,8 +543,8 @@
 
     /* ── GitHub API ── */
     async function ghFetch(path, method = 'GET', body = null) {
-      const token = ghStore('token');
-      const repo  = ghStore('repo');   // "username/repo"
+      const token = GH_TOKEN;
+      const repo  = GH_REPO;
       const opts  = {
         method,
         headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' }
@@ -557,14 +563,13 @@
     }
 
     async function pushToGitHub(newContent) {
-      const filePath = ghStore('filepath') || 'index.html';
-      const sha      = await getFileSha(filePath);
-      const encoded  = btoa(unescape(encodeURIComponent(newContent)));
-      await ghFetch(`/contents/${filePath}`, 'PUT', {
+      const sha     = await getFileSha(GH_FILEPATH);
+      const encoded = btoa(unescape(encodeURIComponent(newContent)));
+      await ghFetch(`/contents/${GH_FILEPATH}`, 'PUT', {
         message: `[admin] content update ${new Date().toISOString()}`,
         content: encoded,
         sha: sha || undefined,
-        branch: ghStore('branch') || 'main'
+        branch: GH_BRANCH
       });
     }
 
@@ -654,36 +659,23 @@
 
     /* ── 로그인 ── */
     async function tryLogin() {
+      const id   = document.getElementById('admin-id').value.trim();
       const pw   = document.getElementById('admin-pw').value;
       const hash = await sha256(pw);
-      if (hash !== ADMIN_PASSWORD_HASH) {
-        document.getElementById('admin-login-err').style.display = 'block';
+      const err  = document.getElementById('admin-login-err');
+      if (id !== ADMIN_ID || hash !== ADMIN_PASSWORD_HASH) {
+        err.textContent = '아이디 또는 비밀번호가 올바르지 않습니다.';
+        err.style.display = 'block';
         return;
       }
-      // GitHub 설정 저장
-      const token    = document.getElementById('admin-token').value.trim();
-      const repo     = document.getElementById('admin-repo').value.trim();
-      const branch   = document.getElementById('admin-branch').value.trim() || 'main';
-      const filepath = document.getElementById('admin-filepath').value.trim() || 'index.html';
-      if (!token || !repo) {
-        document.getElementById('admin-login-err').textContent = 'GitHub Token과 Repo를 입력하세요.';
-        document.getElementById('admin-login-err').style.display = 'block';
-        return;
-      }
-      ghStore('token', token);
-      ghStore('repo', repo);
-      ghStore('branch', branch);
-      ghStore('filepath', filepath);
-
-      document.getElementById('admin-login-modal').style.display = 'none';
-      document.getElementById('admin-toolbar').style.display     = 'flex';
+      err.style.display = 'none';
+      document.getElementById('admin-login-modal').classList.remove('show');
+      document.getElementById('admin-toolbar').style.display = 'flex';
       enableEditing();
       toast('관리자 모드 활성화');
     }
 
     function logout() {
-      ghStore('token', null); ghStore('repo', null);
-      ghStore('branch', null); ghStore('filepath', null);
       disableEditing();
       document.getElementById('admin-toolbar').style.display = 'none';
       toast('로그아웃 되었습니다.');
@@ -774,17 +766,11 @@
       <div id="admin-login-modal">
         <div id="admin-login-box">
           <h3>ADMIN LOGIN</h3>
+          <label>ID</label>
+          <input type="text" id="admin-id" placeholder="아이디" autocomplete="username" />
           <label>PASSWORD</label>
-          <input type="password" id="admin-pw" placeholder="관리자 비밀번호" />
-          <label>GITHUB TOKEN</label>
-          <input type="password" id="admin-token" placeholder="ghp_xxxxxxxxxxxx" />
-          <label>REPOSITORY (user/repo)</label>
-          <input type="text" id="admin-repo" placeholder="yourname/yourname.github.io" />
-          <label>BRANCH</label>
-          <input type="text" id="admin-branch" placeholder="main" value="main" />
-          <label>FILE PATH</label>
-          <input type="text" id="admin-filepath" placeholder="index.html" value="index.html" />
-          <p id="admin-login-err">비밀번호가 올바르지 않습니다.</p>
+          <input type="password" id="admin-pw" placeholder="비밀번호" autocomplete="current-password" />
+          <p id="admin-login-err">아이디 또는 비밀번호가 올바르지 않습니다.</p>
           <div id="admin-login-actions">
             <button id="admin-login-submit">로그인</button>
             <button id="admin-login-cancel">취소</button>
@@ -825,7 +811,7 @@
     /* ── 이벤트 바인딩 ── */
     document.getElementById('admin-fab').onclick = () => {
       document.getElementById('admin-login-modal').classList.add('show');
-      document.getElementById('admin-pw').focus();
+      document.getElementById('admin-id').focus();
     };
     document.getElementById('admin-login-cancel').onclick = () => {
       document.getElementById('admin-login-modal').classList.remove('show');
