@@ -72,7 +72,7 @@
   <!-- ── 네비게이션 ── -->
   <nav class="fixed top-0 left-0 right-0 z-50 bg-paper/90 backdrop-blur-sm border-b border-ink/10">
     <div class="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-      <a href="#" class="font-mono text-sm font-medium text-accent tracking-wide" style="color: rgb(104, 161, 223);">YN<span class="text-highlight" style="color: rgb(101, 116, 118);">.</span></a>
+      <a href="#" class="font-mono text-sm font-medium text-accent tracking-wide" style="color: rgb(80, 80, 80);">SANGWOO NAM<span class="text-highlight" style="color: rgb(101, 116, 118);"></span></a>
       <div class="flex gap-8 text-sm text-muted">
         <a href="#about" class="hover:text-ink transition-colors pb-0.5">About</a>
         <a href="#research" class="hover:text-ink transition-colors pb-0.5">Research</a>
@@ -83,23 +83,45 @@
     </div>
   </nav>
 
+
+  <div class="md:col-span-3 space-y-6 relative">
+  
+  <!-- 원형 사진 (이름 텍스트 우측에 겹침)
+  <img src="https://i.pravatar.cc/300" alt="Sangwoo Nam"
+     class="absolute top-8 right-0 w-40 h-40 rounded-full object-cover border-4 border-white shadow-lg opacity-90" />
+  <p class="animate-fade-up font-mono text-sm text-highlight uppercase tracking-widest">
+    Physics · Semiconductor Engineering
+  </p>
+  <h1 class="animate-fade-up delay-100 font-display text-5xl md:text-6xl leading-tight text-ink">
+    Sangwoo<br>Nam
+  </h1>
+  ...
+</div>
+ -->
+
   <!-- ── HERO ── -->
   <header class="min-h-screen flex items-center pt-14" style="padding-top: 48px;">
     <div class="max-w-5xl mx-auto px-6 py-20 grid md:grid-cols-5 gap-12 items-center">
 
       <!-- 텍스트 -->
-      <div class="md:col-span-3 space-y-6">
-        <p class="animate-fade-up font-mono text-sm text-highlight uppercase tracking-widest" style="outline: none; border-radius: 2px; color: rgb(101, 116, 118);">
+      <div class="md:col-span-3 space-y-6 relative">
+
+        <!-- 배경 사진 -->
+        <img img id="profile-img" src="sangwoo.jpg" alt="Sangwoo Nam" class="rounded-full object-cover opacity-50" style="position:fixed; top:300px; left:100px; width:300px; height:300px;  z-index:0;
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);" />
+
+        <p class="relative animate-fade-up font-mono text-sm text-highlight uppercase tracking-widest" style="z-index:1; outline: none; border-radius: 2px; color: rgb(101, 116, 118);">
           Physics · Semiconductor Engineering
         </p>
-        <h1 class="animate-fade-up delay-100 font-display text-5xl md:text-6xl leading-tight text-ink" style="outline: none; border-radius: 2px;">
-          Sangwoo<br>Nam</h1>
-        <div class="divider animate-fade-up delay-200"></div>
-        <p class="animate-fade-up delay-300 text-lg text-muted leading-relaxed max-w-md" style="outline: none; border-radius: 2px;">
+        <h1 class="relative animate-fade-up delay-100 font-display text-5xl md:text-6xl leading-tight text-ink" style="z-index:1; outline: none; border-radius: 2px;">
+          Sangwoo<br>Nam
+        </h1>
+        <div class="divider animate-fade-up delay-200" style="position:relative; z-index:1;"></div>
+        <p class="relative animate-fade-up delay-300 text-lg text-muted leading-relaxed max-w-md" style="z-index:1; outline: none; border-radius: 2px;">
           M.S. in Physics.<br>
           A researcher interested in semiconductor devices, device physics and nanomaterials.
         </p>
-        <div class="animate-fade-up delay-400 flex gap-4 pt-2">
+        <div class="relative animate-fade-up delay-400 flex gap-4 pt-2" style="z-index:1;">
           <a href="#publications" class="px-6 py-2.5 bg-accent text-paper text-sm font-medium rounded-sm hover:bg-ink transition-colors" style="background-color: rgb(104, 161, 223);">
             View Publications
           </a>
@@ -155,20 +177,22 @@
           <div class="divider mt-4"></div>
         </div>
         <div class="md:col-span-2 space-y-4 text-muted leading-relaxed">
-          <p style="outline: none; border-radius: 2px;">포논, 진동, 신호, 소리, 음악, 분광분석... 물리학과 전자공학의 경계에서 나노스케일 소자와 전자기 시스템을 연구해 왔습니다.
-            석사 과정에서 <strong class="text-ink font-medium">MoS2-based thin film transitor</strong>의 doping 및 열적 특성 분석 연구를 수행했습니다.
+          <p style="outline: none; border-radius: 2px;">For me, vibration is more than a physical phenomenon — it is a language connecting music, matter, and technology.
           </p>
           <p style="outline: none; border-radius: 2px;">
-            학문적 연구 외에도 Python, MATLAB을 활용한 데이터 분석 자동화,
-            COMSOL Multiphysics 기반 시뮬레이션, PCB 설계 경험이 있습니다. 특히 jazz, funk, rock 등의 음악에 조예가 깊은 연구자 동료를 찾는다면 환영합니다. 언제나 드럼스틱을 잡을 준비가 되어있습니다.</p>
+            My love for drumming first drew me to vibration, and that curiosity eventually expanded into research on light, solids, and semiconductor devices.</p>
+         <p style="outline: none; border-radius: 2px;">
+            From microscopic phonon physics to vibration-driven technologies like RF sputtering, I am fascinated by how vibration shapes both nature and innovation.</p>
+         <p style="outline: none; border-radius: 2px;">
+            And if you're a fellow researcher with a deep appreciation for music, even better — I’m always ready to pick up my drumsticks.</p>
           <div class="pt-4 grid grid-cols-2 gap-4 text-sm">
             <div>
               <p class="font-mono text-xs text-muted uppercase mb-2" style="outline: none;">Language &amp; Tools</p>
               <ul class="space-y-1 text-ink/80">
                 <li style="outline: none;">Python · NumPy · SciPy</li>
-                <li style="outline: none; border-radius: 2px;">MATLAB · Simulink</li>
-                <li style="outline: none;">COMSOL · HFSS · ADS</li>
-                <li style="outline: none; border-radius: 2px;">C · Verilog</li>
+                <li style="outline: none; border-radius: 2px;">Igor</li>
+                <li style="outline: none;">Vegas</li>
+                <li style="outline: none; border-radius: 2px;">FL studio</li>
               </ul>
             </div>
             <div>
@@ -198,49 +222,58 @@
         <!-- 카드 1 -->
         <div class="reveal project-card bg-white/70 border border-ink/10 rounded-sm p-6 space-y-3 visible">
           <div class="w-10 h-10 rounded-sm bg-accent/10 flex items-center justify-center">
-            <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: rgb(104, 161, 223);">
+            <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M3 9h2m-2 6h2m14-6h2m-2 6h2M7 7h10a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2V9a2 2 0 012-2zm3 4h4v2h-4v-2z"/>
+</svg>
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"></path>
             </svg>
           </div>
           <h3 class="font-medium text-ink" style="outline: none;">Semiconductor Devices</h3>
           <p class="text-sm text-muted leading-relaxed" style="outline: none;">
-            내용 추가.
+            <!-- 내용추가 -->
           </p>
           <div class="flex flex-wrap gap-1.5 pt-1">
-            <span class="tag px-1.5 py-0.5 bg-accent/10 text-accent rounded-sm" style="color: rgb(104, 161, 223);">HEMT</span>
-            <span class="tag px-1.5 py-0.5 bg-accent/10 text-accent rounded-sm" style="color: rgb(104, 161, 223);">2DEG</span>
+            <span class="tag px-1.5 py-0.5 bg-accent/10 text-accent rounded-sm" style="color: rgb(104, 161, 223);">Flash Memories</span>
+            <span class="tag px-1.5 py-0.5 bg-accent/10 text-accent rounded-sm" style="color: rgb(104, 161, 223);">2D FETs</span>
+            <span class="tag px-1.5 py-0.5 bg-accent/10 text-accent rounded-sm" style="color: rgb(104, 161, 223);">Fabrication</span>
           </div>
         </div>
         <!-- 카드 2 -->
         <div class="reveal project-card bg-white/70 border border-ink/10 rounded-sm p-6 space-y-3 visible" style="transition-delay:0.1s">
           <div class="w-10 h-10 rounded-sm bg-highlight/20 flex items-center justify-center">
-            <svg class="w-5 h-5 text-highlight" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: rgb(101, 116, 118);">
+            <svg class="w-5 h-5 text-highlight" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12c0 0 2-4 4-4s4 8 6 8 4-8 6-8"/>
+</svg>
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
             </svg>
           </div>
           <h3 class="font-medium text-ink" style="outline: none;">Device Physics</h3>
           <p class="text-sm text-muted leading-relaxed" style="outline: none;">
-            내용 추가.
+             <!-- 내용추가 -->
           </p>
           <div class="flex flex-wrap gap-1.5 pt-1">
-            <span class="tag px-1.5 py-0.5 bg-highlight/20 text-amber-700 rounded-sm">LNA</span>
-            <span class="tag px-1.5 py-0.5 bg-highlight/20 text-amber-700 rounded-sm">5G mmWave</span>
+            <span class="tag px-1.5 py-0.5 bg-highlight/20 text-amber-700 rounded-sm">Charge Trap</span>
+            <span class="tag px-1.5 py-0.5 bg-highlight/20 text-amber-700 rounded-sm">BTI Theory</span>
+            <span class="tag px-1.5 py-0.5 bg-highlight/20 text-amber-700 rounded-sm">Low-temperature Phenomena</span>
           </div>
         </div>
         <!-- 카드 3 -->
         <div class="reveal project-card bg-white/70 border border-ink/10 rounded-sm p-6 space-y-3 visible" style="transition-delay:0.2s">
           <div class="w-10 h-10 rounded-sm bg-green-50 flex items-center justify-center">
             <svg class="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+</svg>
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
             </svg>
           </div>
           <h3 class="font-medium text-ink" style="outline: none;">2D Materials</h3>
           <p class="text-sm text-muted leading-relaxed" style="outline: none;">
-            내용 추가.
+            <!-- 내용추가 -->
           </p>
           <div class="flex flex-wrap gap-1.5 pt-1">
-            <span class="tag px-1.5 py-0.5 bg-green-50 text-green-800 rounded-sm">FDTD</span>
-            <span class="tag px-1.5 py-0.5 bg-green-50 text-green-800 rounded-sm">Plasmonics</span>
+            <span class="tag px-1.5 py-0.5 bg-green-50 text-green-800 rounded-sm">MoS2</span>
+            <span class="tag px-1.5 py-0.5 bg-green-50 text-green-800 rounded-sm">Exfoliation</span>
+            <span class="tag px-1.5 py-0.5 bg-green-50 text-green-800 rounded-sm">Vertical Phonon Modes</span>
           </div>
         </div>
       </div>
@@ -536,7 +569,7 @@ CTF devices</p>
               <p class="text-sm font-medium text-ink group-hover:text-accent transition-colors" style="outline: none;">linkedin.com/in/sangwoo-nam-8b2a0937a</p>
             </div>
           </a>
-          <a href="/cv.pdf" download="" class="flex items-center gap-4 p-4 border border-highlight/40 rounded-sm bg-highlight/5 hover:bg-highlight/10 transition-all group">
+          <a href="CV-Sangwoo_Nam.pdf" download="" class="flex items-center gap-4 p-4 border border-highlight/40 rounded-sm bg-highlight/5 hover:bg-highlight/10 transition-all group">
             <div class="w-9 h-9 rounded-sm bg-highlight/20 flex items-center justify-center shrink-0">
               <svg class="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -544,7 +577,7 @@ CTF devices</p>
             </div>
             <div>
               <p class="text-xs text-muted font-mono" style="outline: none;">Download</p>
-              <p class="text-sm font-medium text-ink" style="outline: none;">CV 다운로드 (PDF)</p>
+              <p class="text-sm font-medium text-ink" style="outline: none;">Curriculum Vitae (PDF)</p>
             </div>
           </a>
         </div>
@@ -575,4 +608,32 @@ CTF devices</p>
 
 <script defer="" src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;89823c74df044feb85f3131d9fc87c1a&quot;,&quot;r&quot;:1,&quot;server_timing&quot;:{&quot;name&quot;:{&quot;cfCacheStatus&quot;:true,&quot;cfEdge&quot;:true,&quot;cfExtPri&quot;:true,&quot;cfL4&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfSpeedBrain&quot;:true},&quot;location_startswith&quot;:null}}" crossorigin="anonymous"></script>
 <script defer="" src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;89823c74df044feb85f3131d9fc87c1a&quot;,&quot;r&quot;:1,&quot;server_timing&quot;:{&quot;name&quot;:{&quot;cfCacheStatus&quot;:true,&quot;cfEdge&quot;:true,&quot;cfExtPri&quot;:true,&quot;cfL4&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfSpeedBrain&quot;:true},&quot;location_startswith&quot;:null}}" crossorigin="anonymous"></script>
+<script>
+  const img = document.getElementById('profile-img');
+  const startTop = 120;   // 초기 top 위치
+  const endTop = 300;     // Contact 섹션에서의 최종 top 위치
+  const maxMove = 150;    // 최대 이동 거리
+
+  let currentY = 0;
+  let targetY = 0;
+
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    const contact = document.getElementById('contact');
+    const contactTop = contact.offsetTop;
+
+    // 스크롤 진행도 0~1
+    const progress = Math.min(scrollY / contactTop, 1);
+
+    // 진행도에 따라 목표 위치 계산
+    targetY = progress * maxMove;
+  });
+
+  function animate() {
+    currentY += (targetY - currentY) * 0.08;  // 부드럽게 따라감
+    img.style.transform = `translateY(${currentY}px)`;
+    requestAnimationFrame(animate);
+  }
+  animate();
+</script>
 </body></html>
