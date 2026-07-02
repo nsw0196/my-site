@@ -1,79 +1,153 @@
-<h2 class="sr-only">두 물체가 충돌하는 1차원 운동량 보존 시뮬레이션. 질량, 속도, 초기 위치를 조절할 수 있고, 질량중심 위치에는 두 물체의 질량을 합친 가상의 반투명 초록색 물체가 함께 표시된다.</h2>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1차원 운동량 보존 시뮬레이션</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+    background: #f4f3ef;
+    color: #222;
+    margin: 0;
+    padding: 24px;
+  }
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 20px;
+  }
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 1px solid #e3e1d9;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .row span.label { font-size: 13px; color: #666; }
+  .row span.val { font-size: 14px; font-weight: 600; }
+  input[type=range] { width: 100%; margin-bottom: 10px; }
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .controls span.label { font-size: 13px; color: #666; }
+  button {
+    font-size: 13px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+  }
+  button:hover { background: #f0efe9; }
+  button.active { border-color: #185FA5; color: #185FA5; }
+  label.chk { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666; }
+  .spacer { flex: 1; }
+  .track-box {
+    position: relative;
+    height: 180px;
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e3e1d9;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  canvas { width: 100%; height: 100%; display: block; }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .stat {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e3e1d9;
+    padding: 12px;
+    text-align: center;
+  }
+  .stat.accent { background: #E6F1FB; border-color: #B5D4F4; }
+  .stat.success { background: #EAF3DE; border-color: #C0DD97; }
+  .stat .stat-label { font-size: 12px; color: #666; margin-bottom: 4px; }
+  .stat .stat-val { font-size: 16px; font-weight: 600; }
+  .stat.accent .stat-label, .stat.accent .stat-val { color: #185FA5; }
+  .stat.success .stat-label, .stat.success .stat-val { color: #3B6D11; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>1차원 운동량 보존 시뮬레이션</h1>
 
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1rem;">
-  <div style="background:var(--surface-1); border-radius:var(--radius); padding:0.75rem 1rem;">
-    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
-      <span style="font-size:13px; color:var(--text-secondary);">물체 1 질량 (kg)</span>
-      <span id="m1-out" style="font-size:14px; font-weight:500;">2.0</span>
+  <div class="grid2">
+    <div class="card">
+      <div class="row"><span class="label">물체 1 질량 (kg)</span><span class="val" id="m1-out">2.0</span></div>
+      <input type="range" id="m1" min="0.5" max="8" step="0.5" value="2">
+      <div class="row"><span class="label">물체 1 속도 (m/s)</span><span class="val" id="v1-out">4.0</span></div>
+      <input type="range" id="v1" min="-8" max="8" step="0.5" value="4">
+      <div class="row"><span class="label">물체 1 초기 위치</span><span class="val" id="x1-out">10%</span></div>
+      <input type="range" id="x1" min="0" max="100" step="1" value="10">
     </div>
-    <input type="range" id="m1" min="0.5" max="8" step="0.5" value="2" style="width:100%;">
-    <div style="display:flex; justify-content:space-between; align-items:baseline; margin:10px 0 6px;">
-      <span style="font-size:13px; color:var(--text-secondary);">물체 1 속도 (m/s)</span>
-      <span id="v1-out" style="font-size:14px; font-weight:500;">4.0</span>
+    <div class="card">
+      <div class="row"><span class="label">물체 2 질량 (kg)</span><span class="val" id="m2-out">4.0</span></div>
+      <input type="range" id="m2" min="0.5" max="8" step="0.5" value="4">
+      <div class="row"><span class="label">물체 2 속도 (m/s)</span><span class="val" id="v2-out">-1.0</span></div>
+      <input type="range" id="v2" min="-8" max="8" step="0.5" value="-1">
+      <div class="row"><span class="label">물체 2 초기 위치</span><span class="val" id="x2-out">55%</span></div>
+      <input type="range" id="x2" min="0" max="100" step="1" value="55">
     </div>
-    <input type="range" id="v1" min="-8" max="8" step="0.5" value="4" style="width:100%;">
-    <div style="display:flex; justify-content:space-between; align-items:baseline; margin:10px 0 6px;">
-      <span style="font-size:13px; color:var(--text-secondary);">물체 1 초기 위치</span>
-      <span id="x1-out" style="font-size:14px; font-weight:500;">10%</span>
-    </div>
-    <input type="range" id="x1" min="0" max="100" step="1" value="10" style="width:100%;">
   </div>
-  <div style="background:var(--surface-1); border-radius:var(--radius); padding:0.75rem 1rem;">
-    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
-      <span style="font-size:13px; color:var(--text-secondary);">물체 2 질량 (kg)</span>
-      <span id="m2-out" style="font-size:14px; font-weight:500;">4.0</span>
-    </div>
-    <input type="range" id="m2" min="0.5" max="8" step="0.5" value="4" style="width:100%;">
-    <div style="display:flex; justify-content:space-between; align-items:baseline; margin:10px 0 6px;">
-      <span style="font-size:13px; color:var(--text-secondary);">물체 2 속도 (m/s)</span>
-      <span id="v2-out" style="font-size:14px; font-weight:500;">-1.0</span>
-    </div>
-    <input type="range" id="v2" min="-8" max="8" step="0.5" value="-1" style="width:100%;">
-    <div style="display:flex; justify-content:space-between; align-items:baseline; margin:10px 0 6px;">
-      <span style="font-size:13px; color:var(--text-secondary);">물체 2 초기 위치</span>
-      <span id="x2-out" style="font-size:14px; font-weight:500;">55%</span>
-    </div>
-    <input type="range" id="x2" min="0" max="100" step="1" value="55" style="width:100%;">
-  </div>
-</div>
 
-<div style="display:flex; align-items:center; gap:12px; margin-bottom:1rem; flex-wrap:wrap;">
-  <span style="font-size:13px; color:var(--text-secondary);">충돌 방식</span>
-  <div style="display:flex; gap:6px;">
-    <button id="btn-elastic" style="font-size:13px; padding:6px 12px;">탄성 충돌</button>
-    <button id="btn-inelastic" style="font-size:13px; padding:6px 12px;">완전 비탄성 충돌</button>
+  <div class="controls">
+    <span class="label">충돌 방식</span>
+    <button id="btn-elastic" class="active">탄성 충돌</button>
+    <button id="btn-inelastic">완전 비탄성 충돌</button>
+    <label class="chk"><input type="checkbox" id="show-cm" checked>질량중심 표시</label>
+    <label class="chk"><input type="checkbox" id="show-ghost" checked>합성 물체 표시</label>
+    <div class="spacer"></div>
+    <button id="btn-play">▶ 재생</button>
+    <button id="btn-reset">⟳ 리셋</button>
   </div>
-  <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:var(--text-secondary); margin-left:8px;">
-    <input type="checkbox" id="show-cm" checked style="width:14px; height:14px;">질량중심 표시
-  </label>
-  <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:var(--text-secondary);">
-    <input type="checkbox" id="show-ghost" checked style="width:14px; height:14px;">합성 물체 표시
-  </label>
-  <div style="flex:1;"></div>
-  <button id="btn-play" style="font-size:13px; padding:6px 14px;"><i class="ti ti-player-play" aria-hidden="true" style="vertical-align:-2px; margin-right:4px;"></i>재생</button>
-  <button id="btn-reset" style="font-size:13px; padding:6px 14px;"><i class="ti ti-refresh" aria-hidden="true" style="vertical-align:-2px; margin-right:4px;"></i>리셋</button>
-</div>
 
-<div style="position:relative; height:180px; background:var(--surface-1); border-radius:var(--radius); overflow:hidden; margin-bottom:1rem;">
-  <canvas id="track" style="width:100%; height:100%; display:block;"></canvas>
-</div>
+  <div class="track-box">
+    <canvas id="track"></canvas>
+  </div>
 
-<div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px;">
-  <div style="background:var(--surface-1); border-radius:var(--radius); padding:0.75rem 1rem; text-align:center;">
-    <div style="font-size:12px; color:var(--text-secondary); margin-bottom:4px;">충돌 전 운동량</div>
-    <div id="p-before" style="font-size:16px; font-weight:500;">7.0 kg·m/s</div>
-  </div>
-  <div style="background:var(--surface-1); border-radius:var(--radius); padding:0.75rem 1rem; text-align:center;">
-    <div style="font-size:12px; color:var(--text-secondary); margin-bottom:4px;">충돌 후 운동량</div>
-    <div id="p-after" style="font-size:16px; font-weight:500;">7.0 kg·m/s</div>
-  </div>
-  <div style="background:var(--bg-success); border-radius:var(--radius); padding:0.75rem 1rem; text-align:center;">
-    <div style="font-size:12px; color:var(--text-success); margin-bottom:4px;">운동량 차이</div>
-    <div id="p-diff" style="font-size:16px; font-weight:500; color:var(--text-success);">0.0 kg·m/s</div>
-  </div>
-  <div style="background:var(--bg-accent); border-radius:var(--radius); padding:0.75rem 1rem; text-align:center;">
-    <div style="font-size:12px; color:var(--text-accent); margin-bottom:4px;">질량중심 속도</div>
-    <div id="v-cm" style="font-size:16px; font-weight:500; color:var(--text-accent);">1.2 m/s</div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">충돌 전 운동량</div>
+      <div class="stat-val" id="p-before">7.0 kg·m/s</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">충돌 후 운동량</div>
+      <div class="stat-val" id="p-after">7.0 kg·m/s</div>
+    </div>
+    <div class="stat success">
+      <div class="stat-label">운동량 차이</div>
+      <div class="stat-val" id="p-diff">0.0 kg·m/s</div>
+    </div>
+    <div class="stat accent">
+      <div class="stat-label">질량중심 속도</div>
+      <div class="stat-val" id="v-cm">1.2 m/s</div>
+    </div>
   </div>
 </div>
 
@@ -95,12 +169,14 @@
   var mode = 'elastic';
   var W, H;
   var BOX = 44;
+  var dpr = window.devicePixelRatio || 1;
+
   function resize(){
     var rect = canvas.getBoundingClientRect();
     W = rect.width; H = rect.height;
-    canvas.width = W * devicePixelRatio;
-    canvas.height = H * devicePixelRatio;
-    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
   }
   window.addEventListener('resize', function(){ resize(); reset(); });
 
@@ -176,18 +252,14 @@
 
   btnElastic.addEventListener('click', function(){
     mode = 'elastic';
-    btnElastic.style.borderColor = 'var(--border-accent)';
-    btnElastic.style.color = 'var(--text-accent)';
-    btnInelastic.style.borderColor = 'var(--border)';
-    btnInelastic.style.color = 'var(--text-primary)';
+    btnElastic.classList.add('active');
+    btnInelastic.classList.remove('active');
     reset();
   });
   btnInelastic.addEventListener('click', function(){
     mode = 'inelastic';
-    btnInelastic.style.borderColor = 'var(--border-accent)';
-    btnInelastic.style.color = 'var(--text-accent)';
-    btnElastic.style.borderColor = 'var(--border)';
-    btnElastic.style.color = 'var(--text-primary)';
+    btnInelastic.classList.add('active');
+    btnElastic.classList.remove('active');
     reset();
   });
 
@@ -257,16 +329,16 @@
       ctx.fillRect(gx, trackY, BOX, BOX);
       ctx.restore();
       ctx.fillStyle = '#173404';
-      ctx.font = '500 10px var(--font-sans, sans-serif)';
+      ctx.font = '600 10px inherit';
       ctx.textAlign = 'center';
-      ctx.fillText('m₁+m₂', state.xcm, trackY+BOX/2+3);
-      ctx.font = '400 10px var(--font-sans, sans-serif)';
-      ctx.fillStyle = 'var(--text-muted)';
+      ctx.fillText('m\u2081+m\u2082', state.xcm, trackY+BOX/2+3);
+      ctx.font = '400 10px inherit';
+      ctx.fillStyle = '#999';
       ctx.fillText('가상 물체', state.xcm, trackY-8);
     }
 
-    drawBox(state.x1, trackY, colorFor(1), 'm₁='+state.m1.toFixed(1), currentV(1).toFixed(1)+' m/s');
-    drawBox(state.x2, trackY, colorFor(2), 'm₂='+state.m2.toFixed(1), currentV(2).toFixed(1)+' m/s');
+    drawBox(state.x1, trackY, colorFor(1), 'm\u2081='+state.m1.toFixed(1), currentV(1).toFixed(1)+' m/s');
+    drawBox(state.x2, trackY, colorFor(2), 'm\u2082='+state.m2.toFixed(1), currentV(2).toFixed(1)+' m/s');
 
     var markerY = trackY + BOX + 12;
     drawMarker(state.x1 + state.w1/2, markerY, colorFor(1).marker, '1');
@@ -285,8 +357,8 @@
     ctx.lineTo(cx+7, cy+7);
     ctx.closePath();
     ctx.fill();
-    ctx.fillStyle = 'var(--text-secondary)';
-    ctx.font = '500 11px var(--font-sans, sans-serif)';
+    ctx.fillStyle = '#666';
+    ctx.font = '600 11px inherit';
     ctx.textAlign = 'center';
     ctx.fillText(label, cx, cy+20);
   }
@@ -299,18 +371,17 @@
     ctx.fillStyle = col.fill;
     ctx.fillRect(x, y, BOX, BOX);
     ctx.fillStyle = col.text;
-    ctx.font = '500 12px var(--font-sans, sans-serif)';
+    ctx.font = '600 12px inherit';
     ctx.textAlign = 'center';
     ctx.fillText(label, x+BOX/2, y+BOX/2+4);
-    ctx.fillStyle = 'var(--text-secondary)';
-    ctx.font = '400 11px var(--font-sans, sans-serif)';
+    ctx.fillStyle = '#666';
+    ctx.font = '400 11px inherit';
     ctx.fillText(vlabel, x+BOX/2, y-8);
   }
-
-  btnElastic.style.borderColor = 'var(--border-accent)';
-  btnElastic.style.color = 'var(--text-accent)';
 
   resize();
   reset();
 })();
 </script>
+</body>
+</html>
