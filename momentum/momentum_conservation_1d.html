@@ -1,0 +1,316 @@
+<h2 class="sr-only">두 물체가 충돌하는 1차원 운동량 보존 시뮬레이션. 질량, 속도, 초기 위치를 조절할 수 있고, 질량중심 위치에는 두 물체의 질량을 합친 가상의 반투명 초록색 물체가 함께 표시된다.</h2>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1rem;">
+  <div style="background:var(--surface-1); border-radius:var(--radius); padding:0.75rem 1rem;">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
+      <span style="font-size:13px; color:var(--text-secondary);">물체 1 질량 (kg)</span>
+      <span id="m1-out" style="font-size:14px; font-weight:500;">2.0</span>
+    </div>
+    <input type="range" id="m1" min="0.5" max="8" step="0.5" value="2" style="width:100%;">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin:10px 0 6px;">
+      <span style="font-size:13px; color:var(--text-secondary);">물체 1 속도 (m/s)</span>
+      <span id="v1-out" style="font-size:14px; font-weight:500;">4.0</span>
+    </div>
+    <input type="range" id="v1" min="-8" max="8" step="0.5" value="4" style="width:100%;">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin:10px 0 6px;">
+      <span style="font-size:13px; color:var(--text-secondary);">물체 1 초기 위치</span>
+      <span id="x1-out" style="font-size:14px; font-weight:500;">10%</span>
+    </div>
+    <input type="range" id="x1" min="0" max="100" step="1" value="10" style="width:100%;">
+  </div>
+  <div style="background:var(--surface-1); border-radius:var(--radius); padding:0.75rem 1rem;">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
+      <span style="font-size:13px; color:var(--text-secondary);">물체 2 질량 (kg)</span>
+      <span id="m2-out" style="font-size:14px; font-weight:500;">4.0</span>
+    </div>
+    <input type="range" id="m2" min="0.5" max="8" step="0.5" value="4" style="width:100%;">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin:10px 0 6px;">
+      <span style="font-size:13px; color:var(--text-secondary);">물체 2 속도 (m/s)</span>
+      <span id="v2-out" style="font-size:14px; font-weight:500;">-1.0</span>
+    </div>
+    <input type="range" id="v2" min="-8" max="8" step="0.5" value="-1" style="width:100%;">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin:10px 0 6px;">
+      <span style="font-size:13px; color:var(--text-secondary);">물체 2 초기 위치</span>
+      <span id="x2-out" style="font-size:14px; font-weight:500;">55%</span>
+    </div>
+    <input type="range" id="x2" min="0" max="100" step="1" value="55" style="width:100%;">
+  </div>
+</div>
+
+<div style="display:flex; align-items:center; gap:12px; margin-bottom:1rem; flex-wrap:wrap;">
+  <span style="font-size:13px; color:var(--text-secondary);">충돌 방식</span>
+  <div style="display:flex; gap:6px;">
+    <button id="btn-elastic" style="font-size:13px; padding:6px 12px;">탄성 충돌</button>
+    <button id="btn-inelastic" style="font-size:13px; padding:6px 12px;">완전 비탄성 충돌</button>
+  </div>
+  <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:var(--text-secondary); margin-left:8px;">
+    <input type="checkbox" id="show-cm" checked style="width:14px; height:14px;">질량중심 표시
+  </label>
+  <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:var(--text-secondary);">
+    <input type="checkbox" id="show-ghost" checked style="width:14px; height:14px;">합성 물체 표시
+  </label>
+  <div style="flex:1;"></div>
+  <button id="btn-play" style="font-size:13px; padding:6px 14px;"><i class="ti ti-player-play" aria-hidden="true" style="vertical-align:-2px; margin-right:4px;"></i>재생</button>
+  <button id="btn-reset" style="font-size:13px; padding:6px 14px;"><i class="ti ti-refresh" aria-hidden="true" style="vertical-align:-2px; margin-right:4px;"></i>리셋</button>
+</div>
+
+<div style="position:relative; height:180px; background:var(--surface-1); border-radius:var(--radius); overflow:hidden; margin-bottom:1rem;">
+  <canvas id="track" style="width:100%; height:100%; display:block;"></canvas>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px;">
+  <div style="background:var(--surface-1); border-radius:var(--radius); padding:0.75rem 1rem; text-align:center;">
+    <div style="font-size:12px; color:var(--text-secondary); margin-bottom:4px;">충돌 전 운동량</div>
+    <div id="p-before" style="font-size:16px; font-weight:500;">7.0 kg·m/s</div>
+  </div>
+  <div style="background:var(--surface-1); border-radius:var(--radius); padding:0.75rem 1rem; text-align:center;">
+    <div style="font-size:12px; color:var(--text-secondary); margin-bottom:4px;">충돌 후 운동량</div>
+    <div id="p-after" style="font-size:16px; font-weight:500;">7.0 kg·m/s</div>
+  </div>
+  <div style="background:var(--bg-success); border-radius:var(--radius); padding:0.75rem 1rem; text-align:center;">
+    <div style="font-size:12px; color:var(--text-success); margin-bottom:4px;">운동량 차이</div>
+    <div id="p-diff" style="font-size:16px; font-weight:500; color:var(--text-success);">0.0 kg·m/s</div>
+  </div>
+  <div style="background:var(--bg-accent); border-radius:var(--radius); padding:0.75rem 1rem; text-align:center;">
+    <div style="font-size:12px; color:var(--text-accent); margin-bottom:4px;">질량중심 속도</div>
+    <div id="v-cm" style="font-size:16px; font-weight:500; color:var(--text-accent);">1.2 m/s</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var m1 = document.getElementById('m1'), v1 = document.getElementById('v1'), x1r = document.getElementById('x1');
+  var m2 = document.getElementById('m2'), v2 = document.getElementById('v2'), x2r = document.getElementById('x2');
+  var m1out = document.getElementById('m1-out'), v1out = document.getElementById('v1-out'), x1out = document.getElementById('x1-out');
+  var m2out = document.getElementById('m2-out'), v2out = document.getElementById('v2-out'), x2out = document.getElementById('x2-out');
+  var btnElastic = document.getElementById('btn-elastic'), btnInelastic = document.getElementById('btn-inelastic');
+  var btnPlay = document.getElementById('btn-play'), btnReset = document.getElementById('btn-reset');
+  var showCm = document.getElementById('show-cm');
+  var showGhost = document.getElementById('show-ghost');
+  var pBefore = document.getElementById('p-before'), pAfter = document.getElementById('p-after'), pDiff = document.getElementById('p-diff');
+  var vCmOut = document.getElementById('v-cm');
+  var canvas = document.getElementById('track');
+  var ctx = canvas.getContext('2d');
+
+  var mode = 'elastic';
+  var W, H;
+  var BOX = 44;
+  function resize(){
+    var rect = canvas.getBoundingClientRect();
+    W = rect.width; H = rect.height;
+    canvas.width = W * devicePixelRatio;
+    canvas.height = H * devicePixelRatio;
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  }
+  window.addEventListener('resize', function(){ resize(); reset(); });
+
+  var state = {};
+  var playing = false;
+  var collided = false;
+  var animId = null;
+  var scale = 22;
+
+  function reset(){
+    playing = false;
+    collided = false;
+    if(animId) cancelAnimationFrame(animId);
+    var M1 = parseFloat(m1.value), V1 = parseFloat(v1.value);
+    var M2 = parseFloat(m2.value), V2 = parseFloat(v2.value);
+    var w1 = BOX, w2 = BOX;
+    var margin = 20;
+    var usable = Math.max(W - w1 - w2 - margin*2, 10);
+    var pos1 = parseFloat(x1r.value)/100, pos2 = parseFloat(x2r.value)/100;
+    var x1p = margin + pos1 * usable;
+    var x2p = margin + pos2 * usable;
+    var vcm = (M1*V1 + M2*V2)/(M1+M2);
+    var xcm0 = (M1*(x1p+w1/2) + M2*(x2p+w2/2))/(M1+M2);
+    state = {
+      m1: M1, m2: M2,
+      v1i: V1, v2i: V2,
+      v1: V1, v2: V2,
+      w1: w1, w2: w2,
+      x1: x1p,
+      x2: x2p,
+      xcm: xcm0,
+      vcm: vcm,
+      afterV1: null, afterV2: null
+    };
+    updateReadouts();
+    computeAfter();
+    vCmOut.textContent = vcm.toFixed(2) + ' m/s';
+    draw();
+  }
+
+  function computeAfter(){
+    var m1v=state.m1, m2v=state.m2, u1=state.v1i, u2=state.v2i;
+    if(mode === 'elastic'){
+      state.afterV1 = ((m1v-m2v)*u1 + 2*m2v*u2)/(m1v+m2v);
+      state.afterV2 = ((m2v-m1v)*u2 + 2*m1v*u1)/(m1v+m2v);
+    } else {
+      var v = (m1v*u1 + m2v*u2)/(m1v+m2v);
+      state.afterV1 = v;
+      state.afterV2 = v;
+    }
+    var pb = m1v*u1 + m2v*u2;
+    var pa = mode==='elastic' ? (m1v*state.afterV1 + m2v*state.afterV2) : ((m1v+m2v)*state.afterV1);
+    pBefore.textContent = pb.toFixed(1) + ' kg·m/s';
+    pAfter.textContent = pa.toFixed(1) + ' kg·m/s';
+    pDiff.textContent = Math.abs(pb-pa).toFixed(2) + ' kg·m/s';
+  }
+
+  function updateReadouts(){
+    m1out.textContent = parseFloat(m1.value).toFixed(1);
+    v1out.textContent = parseFloat(v1.value).toFixed(1);
+    x1out.textContent = x1r.value + '%';
+    m2out.textContent = parseFloat(m2.value).toFixed(1);
+    v2out.textContent = parseFloat(v2.value).toFixed(1);
+    x2out.textContent = x2r.value + '%';
+  }
+
+  [m1,v1,x1r,m2,v2,x2r].forEach(function(el){
+    el.addEventListener('input', function(){ reset(); });
+  });
+
+  showCm.addEventListener('change', draw);
+  showGhost.addEventListener('change', draw);
+
+  btnElastic.addEventListener('click', function(){
+    mode = 'elastic';
+    btnElastic.style.borderColor = 'var(--border-accent)';
+    btnElastic.style.color = 'var(--text-accent)';
+    btnInelastic.style.borderColor = 'var(--border)';
+    btnInelastic.style.color = 'var(--text-primary)';
+    reset();
+  });
+  btnInelastic.addEventListener('click', function(){
+    mode = 'inelastic';
+    btnInelastic.style.borderColor = 'var(--border-accent)';
+    btnInelastic.style.color = 'var(--text-accent)';
+    btnElastic.style.borderColor = 'var(--border)';
+    btnElastic.style.color = 'var(--text-primary)';
+    reset();
+  });
+
+  btnReset.addEventListener('click', reset);
+
+  btnPlay.addEventListener('click', function(){
+    if(playing) return;
+    playing = true;
+    lastT = null;
+    animId = requestAnimationFrame(step);
+  });
+
+  var lastT = null;
+  function step(t){
+    if(lastT === null) lastT = t;
+    var dt = Math.min((t-lastT)/1000, 0.032);
+    lastT = t;
+
+    state.x1 += state.v1 * scale * dt;
+    state.x2 += state.v2 * scale * dt;
+
+    if(!collided){
+      var overlap = (state.x1 < state.x2 + state.w2) && (state.x2 < state.x1 + state.w1);
+      if(overlap){
+        collided = true;
+        if(state.x1 <= state.x2){
+          state.x2 = state.x1 + state.w1;
+        } else {
+          state.x1 = state.x2 + state.w2;
+        }
+        state.v1 = state.afterV1;
+        state.v2 = state.afterV2;
+      }
+    }
+    state.xcm += state.vcm * scale * dt;
+
+    draw();
+
+    var offRight = state.x1 > W + 20 && state.x2 > W + 20;
+    var offLeft = state.x1 + state.w1 < -20 && state.x2 + state.w2 < -20;
+    if(offRight || offLeft){
+      playing = false;
+      return;
+    }
+    animId = requestAnimationFrame(step);
+  }
+
+  function colorFor(idx){
+    return idx === 1 ? {fill:'#378ADD', text:'#042C53', marker:'#185FA5'} : {fill:'#D85A30', text:'#4A1B0C', marker:'#993C1D'};
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var trackY = H*0.4;
+    ctx.strokeStyle = 'rgba(128,128,128,0.35)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, trackY+BOX);
+    ctx.lineTo(W, trackY+BOX);
+    ctx.stroke();
+
+    if(showGhost.checked){
+      var gx = state.xcm - BOX/2;
+      ctx.save();
+      ctx.globalAlpha = 0.35;
+      ctx.fillStyle = '#639922';
+      ctx.fillRect(gx, trackY, BOX, BOX);
+      ctx.restore();
+      ctx.fillStyle = '#173404';
+      ctx.font = '500 10px var(--font-sans, sans-serif)';
+      ctx.textAlign = 'center';
+      ctx.fillText('m₁+m₂', state.xcm, trackY+BOX/2+3);
+      ctx.font = '400 10px var(--font-sans, sans-serif)';
+      ctx.fillStyle = 'var(--text-muted)';
+      ctx.fillText('가상 물체', state.xcm, trackY-8);
+    }
+
+    drawBox(state.x1, trackY, colorFor(1), 'm₁='+state.m1.toFixed(1), currentV(1).toFixed(1)+' m/s');
+    drawBox(state.x2, trackY, colorFor(2), 'm₂='+state.m2.toFixed(1), currentV(2).toFixed(1)+' m/s');
+
+    var markerY = trackY + BOX + 12;
+    drawMarker(state.x1 + state.w1/2, markerY, colorFor(1).marker, '1');
+    drawMarker(state.x2 + state.w2/2, markerY, colorFor(2).marker, '2');
+
+    if(showCm.checked){
+      drawMarker(state.xcm, markerY, '#639922', 'CM');
+    }
+  }
+
+  function drawMarker(cx, cy, fillCol, label){
+    ctx.fillStyle = fillCol;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy-7);
+    ctx.lineTo(cx-7, cy+7);
+    ctx.lineTo(cx+7, cy+7);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = 'var(--text-secondary)';
+    ctx.font = '500 11px var(--font-sans, sans-serif)';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, cx, cy+20);
+  }
+
+  function currentV(idx){
+    return idx===1 ? state.v1 : state.v2;
+  }
+
+  function drawBox(x,y,col,label,vlabel){
+    ctx.fillStyle = col.fill;
+    ctx.fillRect(x, y, BOX, BOX);
+    ctx.fillStyle = col.text;
+    ctx.font = '500 12px var(--font-sans, sans-serif)';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x+BOX/2, y+BOX/2+4);
+    ctx.fillStyle = 'var(--text-secondary)';
+    ctx.font = '400 11px var(--font-sans, sans-serif)';
+    ctx.fillText(vlabel, x+BOX/2, y-8);
+  }
+
+  btnElastic.style.borderColor = 'var(--border-accent)';
+  btnElastic.style.color = 'var(--text-accent)';
+
+  resize();
+  reset();
+})();
+</script>
