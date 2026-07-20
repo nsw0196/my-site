@@ -70,6 +70,11 @@
 <body class="font-sans bg-paper text-ink antialiased" style="background-color: rgb(255, 255, 255);">
 
   <!-- ── 네비게이션 ── -->
+  <style>
+    .nav-dropdown { display: none; }
+    .nav-item:hover .nav-dropdown { display: block; }
+    .nav-dropdown a::after { display: none; }
+  </style>
   <nav class="fixed top-0 left-0 right-0 z-50 bg-paper/90 backdrop-blur-sm border-b border-ink/10">
     <div class="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
       <a href="#" class="font-mono text-sm font-medium text-accent tracking-wide" style="color: rgb(80, 80, 80);">SANGWOO NAM<span class="text-highlight" style="color: rgb(101, 116, 118);"></span></a>
